@@ -5,7 +5,7 @@ import { HumanMessage, SystemMessage, ToolMessage } from '@langchain/core/messag
 import fs from 'node:fs/promises';
 import { z } from 'zod';
 
-const model = new ChatOpenAI({ 
+const model = new ChatOpenAI({
   modelName: process.env.MODEL_NAME || "qwen-coder-turbo",
   apiKey: process.env.OPENAI_API_KEY,
   temperature: 0,
@@ -50,14 +50,16 @@ const messages = [
 ];
 
 let response = await modelWithTools.invoke(messages);
+
+// 打印 AIMessage
 // console.log(response);
 
 messages.push(response);
 
 while (response.tool_calls && response.tool_calls.length > 0) {
-  
+
   console.log(`\n[检测到 ${response.tool_calls.length} 个工具调用]`);
-  
+
   // 执行所有工具调用
   const toolResults = await Promise.all(
     response.tool_calls.map(async (toolCall) => {
@@ -65,7 +67,7 @@ while (response.tool_calls && response.tool_calls.length > 0) {
       if (!tool) {
         return `错误: 找不到工具 ${toolCall.name}`;
       }
-      
+
       console.log(`  [执行工具] ${toolCall.name}(${JSON.stringify(toolCall.args)})`);
       try {
         const result = await tool.invoke(toolCall.args);
@@ -75,7 +77,7 @@ while (response.tool_calls && response.tool_calls.length > 0) {
       }
     })
   );
-  
+
   // 将工具结果添加到消息历史
   response.tool_calls.forEach((toolCall, index) => {
     messages.push(
@@ -85,10 +87,14 @@ while (response.tool_calls && response.tool_calls.length > 0) {
       })
     );
   });
-  
+
   // 再次调用模型，传入工具结果
   response = await modelWithTools.invoke(messages);
 }
+
+// 打印 messages 结构
+// SystemMessage HumanMessage AIMessage ToolMessage
+// console.log(messages);
 
 console.log('\n[最终回复]');
 console.log(response.content);
