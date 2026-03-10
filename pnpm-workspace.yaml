@@ -1,0 +1,9 @@
+packages:
+  - 'tool-test'
+  - 'output-parser-test'
+  - 'prompt-template-test'
+  - 'rag-test'
+  - 'milvus-test'
+  - 'memory-test'
+  - 'runnable-test'
+  - 'hello-nest-langchain'

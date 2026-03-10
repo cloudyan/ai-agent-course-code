@@ -1,6 +1,10 @@
 .DS_Store
 node_modules/
+dist/
 *-lock.json
 *-lock.*
 *.lock
 *.env*
+!.env.example
+.claude
+.pnpm-store/
