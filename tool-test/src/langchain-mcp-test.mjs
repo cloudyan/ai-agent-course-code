@@ -4,7 +4,7 @@ import { ChatOpenAI } from '@langchain/openai';
 import chalk from 'chalk';
 import { HumanMessage, SystemMessage, ToolMessage } from '@langchain/core/messages';
 
-const model = new ChatOpenAI({ 
+const model = new ChatOpenAI({
     modelName: "qwen-plus",
     apiKey: process.env.OPENAI_API_KEY,
     configuration: {
@@ -17,7 +17,7 @@ const mcpClient = new MultiServerMCPClient({
         'my-mcp-server': {
             command: "node",
             args: [
-                "/Users/guang/code/tool-test/src/my-mcp-server.mjs"
+                "/Users/cloudyan/data/code/agents/ai-agent-course-code/tool-test/src/my-mcp-server.mjs"
             ]
         }
     }

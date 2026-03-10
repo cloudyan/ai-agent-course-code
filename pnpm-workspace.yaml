@@ -1,5 +1,6 @@
 packages:
   - 'tool-test'
+  - 'tool-test/react-todo-app'
   - 'output-parser-test'
   - 'prompt-template-test'
   - 'rag-test'

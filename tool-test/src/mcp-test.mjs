@@ -4,7 +4,7 @@ import { ChatOpenAI } from '@langchain/openai';
 import chalk from 'chalk';
 import { HumanMessage, SystemMessage, ToolMessage } from '@langchain/core/messages';
 
-const model = new ChatOpenAI({ 
+const model = new ChatOpenAI({
     modelName: "qwen-plus",
     apiKey: process.env.OPENAI_API_KEY,
     configuration: {
@@ -17,11 +17,11 @@ const mcpClient = new MultiServerMCPClient({
         'my-mcp-server': {
             command: "node",
             args: [
-                "/Users/guang/code/tool-test/src/my-mcp-server.mjs"
+                "/Users/cloudyan/data/code/agents/ai-agent-course-code/tool-test/src/my-mcp-server.mjs"
             ]
         },
         "amap-maps-streamableHTTP": {
-            "url": "https://mcp.amap.com/mcp?key=" + process.env.AMAP_MAPS_API_KEY
+            "url": "https://mcp.amap.com/mcp?key=" + process.env.AMAP_API_KEY
         },
         "filesystem": {
             "command": "npx",
@@ -67,7 +67,7 @@ async function runAgentWithTools(query, maxIterations = 30) {
             const foundTool = tools.find(t => t.name === toolCall.name);
             if (foundTool) {
                 const toolResult = await foundTool.invoke(toolCall.args);
-                
+
                 // 确保 content 是字符串类型
                 let contentStr;
                 if (typeof toolResult === 'string') {
@@ -76,7 +76,7 @@ async function runAgentWithTools(query, maxIterations = 30) {
                     // 如果返回对象有 text 字段，优先使用
                     contentStr = toolResult.text;
                 }
-                                
+
                 messages.push(new ToolMessage({
                     content: contentStr,
                     tool_call_id: toolCall.id,
