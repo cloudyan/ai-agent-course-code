@@ -24,11 +24,16 @@ pnpm install
 ### 配置环境变量
 
 ```bash
-# 复制环境变量示例文件
+# 方式一：手动配置
 cp .env.example .env
+
+# 方式二：使用自动初始化脚本（推荐）
+pnpm init:env
 
 # 编辑 .env 填入实际的 API Key
 ```
+
+子目录会自动通过 symlink 共享根目录的 `.env` 文件，无需在每个子目录重复配置。
 
 ### 运行示例
 

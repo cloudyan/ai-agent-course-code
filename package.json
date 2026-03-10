@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "pnpm -r --parallel run dev",
     "build": "pnpm -r run build",
-    "clean": "pnpm -r exec rm -rf node_modules dist"
+    "clean": "pnpm -r exec rm -rf node_modules dist",
+    "init:env": "bash scripts/init-env.sh"
   },
   "devDependencies": {
     "typescript": "^5.7.3"
