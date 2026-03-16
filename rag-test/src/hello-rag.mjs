@@ -14,29 +14,30 @@ const model = new ChatOpenAI({
 
 const embeddings = new OpenAIEmbeddings({
   apiKey: process.env.OPENAI_API_KEY,
-  model: process.env.EMBEDDINGS_MODEL_NAME,
+  model: process.env.EMBEDDINGS_MODEL_NAME || 'text-embedding-v3',
   configuration: {
     baseURL: process.env.OPENAI_BASE_URL
   },
 });
 
+// 分片
 const documents = [
   new Document({
     pageContent: `光光是一个活泼开朗的小男孩，他有一双明亮的大眼睛，总是带着灿烂的笑容。光光最喜欢的事情就是和朋友们一起玩耍，他特别擅长踢足球，每次在球场上奔跑时，就像一道阳光一样充满活力。`,
-    metadata: { 
-      chapter: 1, 
-      character: "光光", 
-      type: "角色介绍", 
-      mood: "活泼" 
+    metadata: {
+      chapter: 1,
+      character: "光光",
+      type: "角色介绍",
+      mood: "活泼"
     },
   }),
   new Document({
     pageContent: `东东是光光最好的朋友，他是一个安静而聪明的男孩。东东喜欢读书和画画，他的画总是充满了想象力。虽然性格不同，但东东和光光从幼儿园就认识了，他们一起度过了无数个快乐的时光。`,
-    metadata: { 
-      chapter: 2, 
-      character: "东东", 
-      type: "角色介绍", 
-      mood: "温馨" 
+    metadata: {
+      chapter: 2,
+      character: "东东",
+      type: "角色介绍",
+      mood: "温馨"
     },
   }),
   new Document({
@@ -86,6 +87,7 @@ const documents = [
   }),
 ];
 
+// 向量化
 const vectorStore = await MemoryVectorStore.fromDocuments(
   documents,
   embeddings,
@@ -93,41 +95,43 @@ const vectorStore = await MemoryVectorStore.fromDocuments(
 
 const retriever = vectorStore.asRetriever({ k: 3 });
 
+// 测试问题列表
 const questions = [
   "东东和光光是怎么成为朋友的？"
 ];
 
+// 遍历问题并生成回答
 for (const question of questions) {
   console.log("=".repeat(80));
   console.log(`问题: ${question}`);
   console.log("=".repeat(80));
-  
+
   // 使用 retriever 获取文档
   const retrievedDocs = await retriever.invoke(question);
-  
+
   // 使用 similaritySearchWithScore 获取相似度评分
   const scoredResults = await vectorStore.similaritySearchWithScore(question, 3);
-  
+
   // 打印用到的文档和相似度评分
   console.log("\n【检索到的文档及相似度评分】");
   retrievedDocs.forEach((doc, i) => {
     // 找到对应的评分
-    const scoredResult = scoredResults.find(([scoredDoc]) => 
+    const scoredResult = scoredResults.find(([scoredDoc]) =>
       scoredDoc.pageContent === doc.pageContent
     );
     const score = scoredResult ? scoredResult[1] : null;
     const similarity = score !== null ? (1 - score).toFixed(4) : "N/A";
-    
+
     console.log(`\n[文档 ${i + 1}] 相似度: ${similarity}`);
     console.log(`内容: ${doc.pageContent}`);
     console.log(`元数据: 章节=${doc.metadata.chapter}, 角色=${doc.metadata.character}, 类型=${doc.metadata.type}, 心情=${doc.metadata.mood}`);
   });
-  
+
   // 构建 prompt
   const context = retrievedDocs
     .map((doc, i) => `[片段${i + 1}]\n${doc.pageContent}`)
     .join("\n\n━━━━━\n\n");
-  
+
   const prompt = `你是一个讲友情故事的老师。基于以下故事片段回答问题，用温暖生动的语言。如果故事中没有提到，就说"这个故事里还没有提到这个细节"。
 
 故事片段:
@@ -136,7 +140,7 @@ ${context}
 问题: ${question}
 
 老师的回答:`;
-  
+
   // 直接使用 model.invoke
   console.log("\n【AI 回答】");
   const response = await model.invoke(prompt);
