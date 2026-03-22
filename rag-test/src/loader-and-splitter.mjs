@@ -15,6 +15,7 @@ const documents = await cheerioLoader.load();
 const textSplitter = new RecursiveCharacterTextSplitter({
     chunkSize: 400,  // 每个分块的字符数
     chunkOverlap: 50,  // 分块之间的重叠字符数
+    // separators: ["\n\n", "\n", "。","!","？"," ",""]
     separators: ["。","！","？"],  // 分割符，优先使用段落分隔
 });
 

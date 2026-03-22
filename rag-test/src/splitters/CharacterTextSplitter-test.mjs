@@ -2,7 +2,7 @@ import "dotenv/config";
 import "cheerio";
 import { CharacterTextSplitter } from "@langchain/textsplitters";
 import { Document } from "@langchain/core/documents";
-import { getEncoding } from "js-tiktoken"; 
+import { getEncoding } from "js-tiktoken";
 
 const logDocument = new Document({
     pageContent: `[2024-01-15 10:00:00] INFO: Application started
@@ -16,6 +16,7 @@ const logDocument = new Document({
 `
 });
 
+// TIP: CharacterTextSplitter 非常死板，你告诉它按照换行符分割，它就会严格按照这个，就算超过了 chunk size 也不拆分。
 const logTextSplitter = new CharacterTextSplitter({
     separator: '\n',
     chunkSize: 200,

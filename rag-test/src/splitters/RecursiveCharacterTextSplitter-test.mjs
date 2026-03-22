@@ -2,7 +2,7 @@ import "dotenv/config";
 import "cheerio";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { Document } from "@langchain/core/documents";
-import { getEncoding } from "js-tiktoken"; 
+import { getEncoding } from "js-tiktoken";
 
 const logDocument = new Document({
     pageContent: `[2024-01-15 10:00:00] INFO: Application started
@@ -18,6 +18,7 @@ const logDocument = new Document({
 
 const enc = getEncoding("cl100k_base");
 
+// 按照换行符分割后下面的文本超过 chunk size，就会尝试按照句号逗号分割
 const logTextSplitter = new RecursiveCharacterTextSplitter({
     chunkSize: 150,
     chunkOverlap: 20,
