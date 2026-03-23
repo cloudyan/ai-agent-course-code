@@ -8,3 +8,4 @@ dist/
 !.env.example
 .claude
 .pnpm-store/
+volumes

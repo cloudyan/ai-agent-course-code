@@ -44,13 +44,13 @@ async function main() {
     });
     console.log('Collection created');
 
-    // 创建索引
+    // 向量字段需要建立索引
     console.log('\nCreating index...');
     await client.createIndex({
       collection_name: COLLECTION_NAME,
       field_name: 'vector',
       index_type: IndexType.IVF_FLAT,
-      metric_type: MetricType.COSINE,
+      metric_type: MetricType.COSINE, // 指定用余弦相似度作为距离度量
       params: { nlist: 1024 }
     });
     console.log('Index created');
