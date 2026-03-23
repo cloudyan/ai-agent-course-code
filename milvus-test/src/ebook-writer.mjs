@@ -72,8 +72,8 @@ async function ensureCollection(bookId) {
         params: { nlist: 1024 }
       });
       console.log('✓ 索引创建成功');
-    } 
-      
+    }
+
     // 确保集合已加载
     try {
       await client.loadCollection({ collection_name: COLLECTION_NAME });
@@ -101,7 +101,7 @@ async function insertChunksBatch(chunks, bookId, chapterNum) {
     const insertData = await Promise.all(
       chunks.map(async (chunk, chunkIndex) => {
         const vector = await getEmbedding(chunk);
-        // 手动生成 ID：book_id_chapterNum_index
+        // 手动生成 ID：bookId_chapterNum_index
         return {
           id: `${bookId}_${chapterNum}_${chunkIndex}`,
           book_id: bookId,
@@ -134,12 +134,12 @@ async function insertChunksBatch(chunks, bookId, chapterNum) {
 async function loadAndProcessEPubStreaming(bookId) {
   try {
     console.log(`\n开始加载 EPUB 文件: ${EPUB_FILE}`);
-    
+
     // 使用 EPubLoader 加载文件，按章节拆分
     const loader = new EPubLoader(
       EPUB_FILE,
       {
-        splitChapters: true,
+        splitChapters: true, // 将 EPUB 按章节拆分成多个 Document 对象
       }
     );
 
@@ -157,15 +157,15 @@ async function loadAndProcessEPubStreaming(bookId) {
     // 遍历每个章节，进行二次拆分并立即插入
     for (let chapterIndex = 0; chapterIndex < documents.length; chapterIndex++) {
       const chapter = documents[chapterIndex];
-      const chapterContent = chapter.pageContent;
-      
+      const chapterContent = chapter.pageContent; // 包含完整章节文本
+
       console.log(`处理第 ${chapterIndex + 1}/${documents.length} 章...`);
-      
-      // 使用 splitter 进行二次拆分
+
+      // 二次拆分：将章节内容拆分成小片段
       const chunks = await textSplitter.splitText(chapterContent);
-      
+
       console.log(`  拆分为 ${chunks.length} 个片段`);
-      
+
       if (chunks.length === 0) {
         console.log(`  跳过空章节\n`);
         continue;
@@ -174,9 +174,10 @@ async function loadAndProcessEPubStreaming(bookId) {
       console.log(`  生成向量并插入中...`);
 
       // 立即生成向量并插入该章节的所有片段
+      // TIP: 流式处理设计思想, 边处理边插入
       const insertedCount = await insertChunksBatch(chunks, bookId, chapterIndex + 1);
       totalInserted += insertedCount;
-      
+
       console.log(`  ✓ 已插入 ${insertedCount} 条记录（累计: ${totalInserted}）\n`);
     }
 

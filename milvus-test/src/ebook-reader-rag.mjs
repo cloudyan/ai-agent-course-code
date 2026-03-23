@@ -147,7 +147,12 @@ async function main() {
     }
 
     // 问一个关于《天龙八部》的问题
-    await answerEbookQuestion("鸠摩智会什么武功？",5);
+    // await answerEbookQuestion("鸠摩智会什么武功？",5);
+
+    // 复杂场景问题，回答就不行了
+    // await answerEbookQuestion("段誉有几个妹妹？", 5);
+    // await answerEbookQuestion("天龙三兄弟是谁，谁最强", 10);
+    await answerEbookQuestion("段誉和王语嫣有血缘关系吗？最后结局如何？", 5);
   } catch (error) {
     console.error('错误:', error.message);
   }
