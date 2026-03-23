@@ -11,7 +11,7 @@ import { ChatOpenAI } from '@langchain/openai';
       provide: 'CHAT_MODEL',
       useFactory: (configService: ConfigService) => {
         return new ChatOpenAI({
-          modelName: configService.get('MODEL_NAME'),
+          model: configService.get('MODEL_NAME'),
           apiKey: configService.get('OPENAI_API_KEY'),
           configuration: {
             baseURL: configService.get('OPENAI_BASE_URL'),
