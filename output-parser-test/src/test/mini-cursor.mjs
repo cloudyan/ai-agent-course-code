@@ -6,7 +6,15 @@ import { JsonOutputToolsParser } from '@langchain/core/output_parsers/openai_too
 import { executeCommandTool, listDirectoryTool, readFileTool, writeFileTool } from './all-tools.mjs';
 import chalk from 'chalk';
 
-const model = new ChatOpenAI({ 
+// 对于流式返回注意点
+// 1. AIMessageChunk 需要累加，使用 concat 方法合并即可
+//    - concat() 内部会自动合并 tool_call_chunks 并解析 JSON
+//    - 合并后的 message.tool_calls 已经是完整的工具调用数组
+// 2. JsonOutputToolsParser 只是将 tool_calls 格式化为 {type, args, id} 格式
+//    - 它不负责累加 tool_call_chunks（由 concat 完成）
+//    - 它不负责解析部分 JSON（LangChain 内部已完成）
+
+const model = new ChatOpenAI({
     modelName: "qwen-plus",
     apiKey: process.env.OPENAI_API_KEY,
     temperature: 0,
@@ -71,7 +79,7 @@ async function runAgentWithTools(query, maxIterations = 30) {
         console.log(chalk.bgBlue(`\n🚀 Agent 开始思考并生成流...\n`));
 
         for await (const chunk of rawStream) {
-            // 这里的 chunk 是 AIMessageChunk，把它拼接起来
+            // 1. 这里的 chunk 是 AIMessageChunk，把它拼接起来
             fullAIMessage = fullAIMessage ? fullAIMessage.concat(chunk) : chunk;
 
             let parsedTools = null;

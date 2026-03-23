@@ -33,6 +33,7 @@ const modelWithTool = model.bindTools([
 ]);
 
 // 1. 绑定工具并挂载解析器
+// JsonOutputToolsParser 的作用就是解析 tool_call_chunks 中的内容，拼接成符合 json 格式规范的对象，就算 chunk 还没传输完的时候，也能拿到 json 对象
 const parser = new JsonOutputToolsParser();
 const chain = modelWithTool.pipe(parser);
 
