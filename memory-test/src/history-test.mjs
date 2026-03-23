@@ -3,7 +3,9 @@ import { ChatOpenAI } from '@langchain/openai';
 import { InMemoryChatMessageHistory } from "@langchain/core/chat_history";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 
-const model = new ChatOpenAI({ 
+// Memory 的管理策略：截断、总结、检索（向量数据库）
+// 截断或总结方式: 1. 按条数 2. 按 token 量
+const model = new ChatOpenAI({
   modelName: process.env.MODEL_NAME,
   apiKey: process.env.OPENAI_API_KEY,
   temperature: 0,
@@ -25,11 +27,11 @@ async function inMemoryDemo() {
     "你今天吃的什么？"
   );
   await history.addMessage(userMessage1);
-  
+
   const messages1 = [systemMessage, ...(await history.getMessages())];
   const response1 = await model.invoke(messages1);
   await history.addMessage(response1);
-  
+
   console.log(`用户: ${userMessage1.content}`);
   console.log(`助手: ${response1.content}\n`);
 
@@ -39,11 +41,11 @@ async function inMemoryDemo() {
     "好吃吗？"
   );
   await history.addMessage(userMessage2);
-  
+
   const messages2 = [systemMessage, ...(await history.getMessages())];
   const response2 = await model.invoke(messages2);
   await history.addMessage(response2);
-  
+
   console.log(`用户: ${userMessage2.content}`);
   console.log(`助手: ${response2.content}\n`);
 

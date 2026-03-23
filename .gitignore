@@ -9,3 +9,4 @@ dist/
 .claude
 .pnpm-store/
 volumes
+chat_history.json

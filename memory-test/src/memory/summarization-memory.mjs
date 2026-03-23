@@ -40,31 +40,32 @@ async function summarizationMemoryDemo() {
   }
 
   let allMessages = await history.getMessages();
-  
+
   console.log(`原始消息数量: ${allMessages.length}`);
   console.log("原始消息:", allMessages.map(m => `${m.constructor.name}: ${m.content}`).join('\n  '));
-  
+
   // 如果消息过多，触发总结
+  // 【基于消息数】 大于 maxMessages 时，固定保留最后两条消息，对之前的消息做总结处理
   if (allMessages.length >= maxMessages) {
     const keepRecent = 2; // 保留最近 2 条消息
-    
+
     // 分离要保留的消息和要总结的消息
     const recentMessages = allMessages.slice(-keepRecent);
     const messagesToSummarize = allMessages.slice(0, -keepRecent);
-    
+
     console.log("\n💡 历史消息过多，开始总结...");
     console.log(`📝 将被总结的消息数量: ${messagesToSummarize.length}`);
     console.log(`📝 将被保留的消息数量: ${recentMessages.length}`);
-    
+
     // 总结将被丢弃的旧消息
     const summary = await summarizeHistory(messagesToSummarize);
-    
+
     // 清空历史消息，只保留最近的消息
     await history.clear();
     for (const msg of recentMessages) {
       await history.addMessage(msg);
     }
-    
+
     console.log(`\n保留消息数量: ${recentMessages.length}`);
     console.log("保留的消息:", recentMessages.map(m => `${m.constructor.name}: ${m.content}`).join('\n  '));
     console.log(`\n总结内容（不包含保留的消息）: ${summary}`);
@@ -78,18 +79,15 @@ summarizationMemoryDemo().catch(console.error);
 // 总结历史对话的函数
 async function summarizeHistory(messages) {
   if (messages.length === 0) return "";
-  
-  const conversationText = getBufferString(messages, {
-    humanPrefix: "用户",
-    aiPrefix: "助手",
-  });
-  
+
+  const conversationText = getBufferString(messages, "用户", "助手");
+
   const summaryPrompt = `请总结以下对话的核心内容，保留重要信息：
 
 ${conversationText}
 
 总结：`;
-  
+
   const summaryResponse = await model.invoke([new SystemMessage(summaryPrompt)]);
   return summaryResponse.content;
 }

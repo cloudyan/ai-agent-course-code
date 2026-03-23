@@ -28,7 +28,7 @@ async function summarizationMemoryDemo() {
   const history = new InMemoryChatMessageHistory();
   const maxTokens = 200; // 超过 200 个 token 时触发总结
   const keepRecentTokens = 80; // 保留最近消息的 token 数量（约占总数的 40%）
-  
+
   const enc = getEncoding("cl100k_base");
 
   const messages = [
@@ -54,44 +54,46 @@ async function summarizationMemoryDemo() {
   }
 
   let allMessages = await history.getMessages();
-  
+
   const totalTokens = countTokens(allMessages, enc);
-  
+
   // 如果 token 数超过阈值，触发总结
+  // 【基于 token】从后向前累加，保留固定 token 量，对之前的消息做总结处理
   if (totalTokens >= maxTokens) {
     // 从后往前累加消息，保留最近的消息直到达到 keepRecentTokens
     const recentMessages = [];
     let recentTokens = 0;
-    
+
     for (let i = allMessages.length - 1; i >= 0; i--) {
       const msg = allMessages[i];
       const content = typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content);
       const msgTokens = enc.encode(content).length;
-      
+
+      // 小于保留量时，累加 token
       if (recentTokens + msgTokens <= keepRecentTokens) {
-        recentMessages.unshift(msg);
+        recentMessages.unshift(msg); // 记录保留的消息
         recentTokens += msgTokens;
       } else {
         break;
       }
     }
-    
+
     const messagesToSummarize = allMessages.slice(0, allMessages.length - recentMessages.length);
     const summarizeTokens = countTokens(messagesToSummarize, enc);
-    
+
     console.log("\n💡 Token 数量超过阈值，开始总结...");
     console.log(`📝 将被总结的消息数量: ${messagesToSummarize.length} (${summarizeTokens} tokens)`);
     console.log(`📝 将被保留的消息数量: ${recentMessages.length} (${recentTokens} tokens)`);
-    
+
     // 总结将被丢弃的旧消息
     const summary = await summarizeHistory(messagesToSummarize);
-    
+
     // 清空历史消息，只保留最近的消息
     await history.clear();
     for (const msg of recentMessages) {
       await history.addMessage(msg);
     }
-    
+
     console.log(`\n保留消息数量: ${recentMessages.length}`);
     console.log("保留的消息:", recentMessages.map(m => {
       const content = typeof m.content === 'string' ? m.content : JSON.stringify(m.content);
@@ -109,18 +111,15 @@ summarizationMemoryDemo().catch(console.error);
 // 总结历史对话的函数
 async function summarizeHistory(messages) {
   if (messages.length === 0) return "";
-  
-  const conversationText = getBufferString(messages, {
-    humanPrefix: "用户",
-    aiPrefix: "助手",
-  });
-  
+
+  const conversationText = getBufferString(messages, "用户", "助手");
+
   const summaryPrompt = `请总结以下对话的核心内容，保留重要信息：
 
 ${conversationText}
 
 总结：`;
-  
+
   const summaryResponse = await model.invoke([new SystemMessage(summaryPrompt)]);
   return summaryResponse.content;
 }
