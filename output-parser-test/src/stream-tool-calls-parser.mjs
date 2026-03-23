@@ -52,15 +52,27 @@ try {
             const toolCall = chunk[0];
 
             // 获取当前工具调用的完整参数内容
-            const currentContent = JSON.stringify(toolCall.args || {}, null, 2);
+            const currentContent = JSON.stringify(toolCall.args || {});
 
+            // 判断：当前内容是否比上次打印的内容更长（即是否有新增内容）
+            // console.log('\n\n')
+            // console.log('currentContent: ', currentContent)
+            // console.log('lastContent: ', lastContent)
             if (currentContent.length > lastContent.length) {
-                const newText = currentContent.slice(lastContent.length);
-                process.stdout.write(newText); // 实时输出到控制台
-                lastContent = currentContent; // 更新已读进度
+                // 只取出新增的部分
+                // 因为是 json 的结构，导致新增的部分获取不完全正确，如下
+                //   currentContent:  {"name":"艾萨克·牛"}
+                //   lastContent:  {"name":"艾"}
+                //   newText: 克·牛"
+                // 但 toolCall.args 是正确的
+                const newText = currentContent.slice(lastContent.length -1, -1);
+                process.stdout.write(newText); // 实时输出到控制台, 只打印新增内容
+                lastContent = currentContent; // 更新已打印的完整内容
             }
 
+            console.log('\n')
             console.log(toolCall.args);
+            console.log('\n\n')
         }
     }
 

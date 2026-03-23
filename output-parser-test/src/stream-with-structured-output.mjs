@@ -36,6 +36,8 @@ try {
 
     console.log("📡 接收流式数据:\n");
 
+    // 用了 withStructuredOutput 之后，它会在 json 生成完通过校验后再返回（底层是 tool calls）。
+    // 所以只有一个 chunk 包含完整 json，不是真的流式输出
     for await (const chunk of stream) {
         chunkCount++;
         result = chunk;

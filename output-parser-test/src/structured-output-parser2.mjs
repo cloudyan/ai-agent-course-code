@@ -46,7 +46,7 @@ const scientistSchema = z.object({
 // 从 zod schema 创建 parser
 const parser = StructuredOutputParser.fromZodSchema(scientistSchema);
 
-const question = `请介绍一下居里夫人（Marie Curie）的详细信息，包括她的教育背景、研究领域、获得的奖项、主要成就和著名理论。
+const question = `请介绍一下居里夫人（Marie Curie）的详细信息，包括她的教育背景、研究领域、获得的奖项、主要成就和著名理论。使用中文回答
 
 ${parser.getFormatInstructions()}`;
 

@@ -30,6 +30,7 @@ const prompt = `详细介绍莫扎特的信息。\n\n${parser.getFormatInstructi
 console.log("🌊 流式结构化输出演示\n");
 
 try {
+    // 用 StructuredOutputParser 解析结果，过程做了流式打印
     const stream = await model.stream(prompt);
 
     let fullContent = '';
