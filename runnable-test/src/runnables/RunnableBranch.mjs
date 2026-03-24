@@ -13,15 +13,17 @@ const handleEven = RunnableLambda.from((input) => `偶数: ${input} * 2 = ${inpu
 const handleDefault = RunnableLambda.from((input) => `默认: ${input}`);
 
 // 创建 RunnableBranch
+// 顺序就是优先级顺序
+// 先执行 isEven，然后执行 isPositive，然后执行 isNegative，最后执行 handleDefault
 const branch = RunnableBranch.from([
+    [isEven, handleEven],
     [isPositive, handlePositive],
     [isNegative, handleNegative],
-    [isEven, handleEven],
     handleDefault
 ]);
 
 // 测试不同的输入
-const testCases = [5, -3, 4, 0];
+const testCases = [5, -3, 4, 0.5];
 
 for (const testCase of testCases) {
     const result = await branch.invoke(testCase);

@@ -25,7 +25,7 @@ const promptTemplate = PromptTemplate.fromTemplate(
     '将以下文本翻译成英文，然后总结为3个关键词。\n\n文本：{text}\n\n{format_instructions}'
 );
 
-const input = { 
+const input = {
     text: 'LangChain 是一个强大的 AI 应用开发框架',
     format_instructions: outputParser.getFormatInstructions()
 };

@@ -42,6 +42,26 @@ const chain = new RunnableWithMessageHistory({
   historyMessagesKey: "history",
 });
 
+
+
+// 如果不使用 RunnableWithMessageHistory
+// 需要手写 history 的管理逻辑
+// const history = getMessageHistory("user-123");
+// // 1) 取历史
+// const past = await history.getMessages();
+// // 2) 手动把历史传进 prompt 变量
+// const answer = await simpleChain.invoke({
+//   question: "我刚才说我来自哪里？",
+//   history: past,
+// });
+// // 3) 手动写回历史
+// await history.addUserMessage("我刚才说我来自哪里？");
+// await history.addAIMessage(answer);
+
+// 用 RunnableWithMessageHistory：少写很多胶水代码，在每一次 invoke 完成后自动追加 history，无需手动管理 history
+
+
+
 // 测试：第一次对话
 console.log('--- 第一次对话（提供信息） ---');
 const result1 = await chain.invoke(

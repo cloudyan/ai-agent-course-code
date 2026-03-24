@@ -10,12 +10,17 @@ const inputData = {
   phone: "+86-13800138000",
 };
 
+// RunnableSequence：至少保留两个 Runnable 步骤，否则会报错
 const chain = RunnableSequence.from([
   (input) => ({
     ...input,
     fullInfo: `${input.name}，${input.age}岁，来自${input.city}`,
   }),
   new RunnablePick(["name", "fullInfo"]),
+  (input) => ({
+    ...input,
+    name: input.name + ' ' + Date.now(),
+  }),
 ]);
 
 const result = await chain.invoke(inputData);

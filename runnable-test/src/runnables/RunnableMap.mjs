@@ -15,7 +15,7 @@ const runnableMap = RunnableMap.from({
     add: addOne,
     multiply: multiplyTwo,
     square: square,
-    
+
     // prompt 格式化
     greeting: greetTemplate,
     weather: weatherTemplate,
