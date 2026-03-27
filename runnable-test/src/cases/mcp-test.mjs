@@ -6,8 +6,8 @@ import { HumanMessage, ToolMessage } from '@langchain/core/messages';
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
 import { RunnableSequence, RunnableLambda, RunnableBranch, RunnablePassthrough } from '@langchain/core/runnables';
 
-const model = new ChatOpenAI({ 
-    modelName: "qwen-plus",
+const model = new ChatOpenAI({
+    model: process.env.MODEL_NAME,
     apiKey: process.env.OPENAI_API_KEY,
     configuration: {
         baseURL: process.env.OPENAI_BASE_URL,

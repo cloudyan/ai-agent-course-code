@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import { HumanMessage, SystemMessage, ToolMessage } from '@langchain/core/messages';
 
 const model = new ChatOpenAI({
-    modelName: "qwen-plus",
+    model: process.env.MODEL_NAME,
     apiKey: process.env.OPENAI_API_KEY,
     configuration: {
         baseURL: process.env.OPENAI_BASE_URL,

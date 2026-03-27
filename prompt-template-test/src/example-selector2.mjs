@@ -25,10 +25,10 @@ const model = new ChatOpenAI({
 
 // 2. 初始化 embeddings
 const embeddings = new OpenAIEmbeddings({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.EMBEDDINGS_API_KEY,
   model: process.env.EMBEDDINGS_MODEL_NAME,
   configuration: {
-    baseURL: process.env.OPENAI_BASE_URL,
+    baseURL: process.env.EMBEDDINGS_BASE_URL
   },
   dimensions: VECTOR_DIM,
 });

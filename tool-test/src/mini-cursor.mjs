@@ -4,8 +4,8 @@ import { HumanMessage, SystemMessage, ToolMessage } from '@langchain/core/messag
 import { executeCommandTool, listDirectoryTool, readFileTool, writeFileTool } from './all-tools.mjs';
 import chalk from 'chalk';
 
-const model = new ChatOpenAI({ 
-    modelName: "qwen-plus",
+const model = new ChatOpenAI({
+    model: process.env.MODEL_NAME,
     apiKey: process.env.OPENAI_API_KEY,
     temperature: 0,
     configuration: {

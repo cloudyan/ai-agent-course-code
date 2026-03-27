@@ -13,10 +13,10 @@ const model = new ChatOpenAI({
 });
 
 const embeddings = new OpenAIEmbeddings({
-  apiKey: process.env.OPENAI_API_KEY,
-  model: process.env.EMBEDDINGS_MODEL_NAME || 'text-embedding-v3',
+  apiKey: process.env.EMBEDDINGS_API_KEY,
+  model: process.env.EMBEDDINGS_MODEL_NAME,
   configuration: {
-    baseURL: process.env.OPENAI_BASE_URL
+    baseURL: process.env.EMBEDDINGS_BASE_URL
   },
 });
 
